@@ -1,0 +1,130 @@
+/* ============ 音视频合并页面 ============ */
+.av-merge-page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    gap: 16px;
+}
+
+/* 文件选择容器 */
+.file-select-container {
+    display: flex;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+/* 文件选择框 */
+.file-select-box {
+    flex: 1;
+    min-height: 200px;
+    border: 2px dashed var(--border);
+    border-radius: var(--border-radius-xl);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-slow);
+    background: var(--bg-card);
+    position: relative;
+}
+
+.file-select-box:hover {
+    border-color: var(--accent);
+    background: rgba(108, 99, 255, 0.08);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.file-select-box.drag-over {
+    border-color: var(--accent);
+    background: rgba(108, 99, 255, 0.1);
+    transform: scale(1.02);
+    box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.file-select-box.has-file {
+    border-style: solid;
+    border-color: var(--success);
+    background: rgba(74, 222, 128, 0.05);
+}
+
+.file-select-box.has-file:hover {
+    border-color: var(--success);
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+}
+
+.file-select-icon {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+}
+
+.file-select-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.file-select-label {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.file-select-hint {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.file-select-info {
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+    padding: 8px 14px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 16px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: none;
+}
+
+.file-select-info.show {
+    display: block;
+}
+
+.file-select-btn {
+    padding: 10px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.file-select-btn:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+    .file-select-container {
+        flex-direction: column;
+    }
+
+    .file-select-box {
+        min-height: 180px;
+    }
+}

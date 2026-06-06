@@ -1,0 +1,31 @@
+[package]
+name = "syncwave"
+version = "1.0.0"
+description = "SyncWave - 音视频工具门户"
+authors = ["TangKuku9"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "syncwave_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+aes = "0.8"
+ecb = "0.1"
+base64 = "0.22"
+uuid = { version = "1", features = ["v4"] }
+walkdir = "2"
+chrono = "0.4"
+
