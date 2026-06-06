@@ -3,7 +3,7 @@
     <div class="content-header"><h2>格式转换</h2><span class="badge">ffmpeg</span></div>
 
     <div class="file-select-container">
-      <div class="file-select-box" @click="selectFile">
+      <div class="file-select-box" :class="{ 'has-file': filePath }" @click="selectFile">
         <Icon name="folder" :size="40" />
         <div class="file-select-label">选择文件</div>
         <div class="file-select-hint">点击选择要转换的文件</div>
@@ -56,8 +56,8 @@ const filePath = ref(''); const fileName = ref(''); const outputFormat = ref('mp
 const outputDir = ref(''); const processing = ref(false); const progress = ref(0); const progressText = ref('')
 const logs = ref<LogEntry[]>([])
 
-async function selectFile() { const f = await selectMediaFile(); if (f) { filePath.value = f; fileName.value = f.split('\\').pop() || f } }
-async function selectOutput() { const d = await selectFolder(); if (d) outputDir.value = d }
+async function selectFile() { try { const f = await selectMediaFile(); if (f) { filePath.value = f; fileName.value = f.split('\\').pop() || f; logs.value.push({ time: new Date().toLocaleTimeString(), message: `已选择: ${fileName.value}`, type: 'info' }) } } catch (e: any) { logs.value.push({ time: new Date().toLocaleTimeString(), message: `选择失败: ${e.message}`, type: 'error' }) } }
+async function selectOutput() { try { const d = await selectFolder(); if (d) { outputDir.value = d; logs.value.push({ time: new Date().toLocaleTimeString(), message: `输出目录: ${d}`, type: 'info' }) } } catch (e: any) { logs.value.push({ time: new Date().toLocaleTimeString(), message: `目录选择失败: ${e.message}`, type: 'error' }) } }
 
 async function startConvert() {
   if (!filePath.value) return

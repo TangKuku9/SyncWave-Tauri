@@ -94,7 +94,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: none;
 }
 
 .file-select-info.show {

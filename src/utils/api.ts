@@ -102,6 +102,9 @@ export const selectVideoFile = () => invoke<string | null>('select_video_file')
 export const selectAudioFile = () => invoke<string | null>('select_audio_file')
 export const selectMediaFile = () => invoke<string | null>('select_media_file')
 
+export const readAudioFile = (path: string) =>
+  invoke<number[]>('read_audio_file', { path })
+
 // ============ NCM 转换 ============
 
 export const convertNcm = (files: string[], outputDir?: string, convertType?: string) =>
@@ -133,6 +136,9 @@ export const compressVideo = (inputPath: string, crf: string, scale?: string, ou
 
 export const videoToGif = (inputPath: string, fps?: number, width?: number, aspectRatio?: string, startTime?: string, endTime?: string, outputDir?: string) =>
   invoke<FfmpegResult>('video_to_gif', { inputPath, fps, width, aspectRatio, startTime, endTime, outputDir })
+
+export const playWithFfplay = (filePath: string) =>
+  invoke<null>('play_with_ffplay', { filePath })
 
 // ============ 歌单管理 ============
 

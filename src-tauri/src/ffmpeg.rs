@@ -85,6 +85,10 @@ fn get_sidecar_path(app: &AppHandle, name: &str) -> PathBuf {
     PathBuf::from(&full_exe_name)
 }
 
+pub fn get_ffplay_path(app: &AppHandle) -> PathBuf {
+    get_sidecar_path(app, "binaries/ffplay")
+}
+
 pub fn get_ffmpeg_path(app: &AppHandle) -> PathBuf {
     get_sidecar_path(app, "binaries/ffmpeg")
 }
@@ -97,6 +101,7 @@ pub fn get_unlock_music_path(app: &AppHandle) -> PathBuf {
     get_sidecar_path(app, "binaries/unlock-music")
 }
 
+#[allow(dead_code)]
 pub fn get_ncmdump_path(app: &AppHandle) -> PathBuf {
     get_sidecar_path(app, "binaries/ncmdump")
 }

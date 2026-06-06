@@ -448,6 +448,11 @@ async fn get_music_url(file_path: String) -> Result<String, String> {
     Ok(format!("file:///{}", file_path.replace('\\', "/")))
 }
 
+#[tauri::command]
+async fn read_audio_file(path: String) -> Result<Vec<u8>, String> {
+    std::fs::read(&path).map_err(|e| format!("读取文件失败: {}", e))
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 struct AudioMetadata {
     path: String, name: String, size: u64, exists: bool, lyrics: Option<String>, error: Option<String>,
@@ -549,12 +554,12 @@ async fn extract_audio(app: AppHandle, input_path: String, audio_format: String,
         log_type: "info".to_string(),
     });
     let codec: Vec<String> = match audio_format.as_str() {
-        "mp3" => vec!["-vn".into(), "-c:a".into(), "libmp3lame".into(), "-b:a".into(), "320k".into()],
-        "flac" => vec!["-vn".into(), "-c:a".into(), "flac".into()],
-        "wav" => vec!["-vn".into(), "-c:a".into(), "pcm_s16le".into()],
-        "m4a"|"aac" => vec!["-vn".into(), "-c:a".into(), "aac".into(), "-b:a".into(), "256k".into()],
-        "ogg" => vec!["-vn".into(), "-c:a".into(), "libvorbis".into(), "-b:a".into(), "192k".into()],
-        _ => vec!["-vn".into(), "-c:a".into(), "copy".into()],
+        "mp3" => vec!["-vn".to_string(), "-c:a".to_string(), "libmp3lame".to_string(), "-b:a".to_string(), "320k".to_string()],
+        "flac" => vec!["-vn".to_string(), "-c:a".to_string(), "flac".to_string()],
+        "wav" => vec!["-vn".to_string(), "-c:a".to_string(), "pcm_s16le".to_string()],
+        "m4a"|"aac" => vec!["-vn".to_string(), "-c:a".to_string(), "aac".to_string(), "-b:a".to_string(), "256k".to_string()],
+        "ogg" => vec!["-vn".to_string(), "-c:a".to_string(), "libvorbis".to_string(), "-b:a".to_string(), "192k".to_string()],
+        _ => vec!["-vn".to_string(), "-c:a".to_string(), "copy".to_string()],
     };
     let args: Vec<String> = vec!["-i".into(), input_path.clone()].into_iter().chain(codec).chain(vec!["-y".into(), output_path.clone()]).collect();
     Ok(ffmpeg::run_ffmpeg(&app, &args, "extract-audio", &output_path, Some(&input_path)))
@@ -639,6 +644,23 @@ async fn video_to_gif(app: AppHandle, input_path: String, fps: Option<u32>, widt
     }
 }
 
+// ============ External Player Commands ============
+
+#[tauri::command]
+async fn play_with_ffplay(app: AppHandle, file_path: String) -> Result<(), String> {
+    let ffplay_path = ffmpeg::get_ffplay_path(&app);
+    if !ffplay_path.exists() {
+        return Err("未找到 ffplay.exe".to_string());
+    }
+    // 使用 ffplay 无界面模式播放音频，播放完毕后自动退出
+    std::thread::spawn(move || {
+        let _ = std::process::Command::new(&ffplay_path)
+            .args(["-nodisp", "-autoexit", "-loglevel", "quiet", &file_path])
+            .output();
+    });
+    Ok(())
+}
+
 // ============ Playlist Commands ============
 
 #[tauri::command]
@@ -711,8 +733,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             select_files, select_folder, select_video_file, select_audio_file, select_media_file,
             convert_ncm,
-            select_music_files, scan_directory, get_music_url, get_audio_metadata,
+            select_music_files, scan_directory, get_music_url, get_audio_metadata, read_audio_file,
             merge_av, format_convert, extract_audio, clip_video, compress_video, video_to_gif,
+            play_with_ffplay,
             load_playlists_index_cmd, load_playlist_cmd, save_playlist_cmd, create_playlist_cmd,
             delete_playlist_cmd, rename_playlist_cmd, reorder_playlists_cmd,
             import_playlist_cmd, export_playlist_json_cmd, export_playlist_m3u_cmd,

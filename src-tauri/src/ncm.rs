@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use aes::cipher::{block_padding::NoPadding, BlockDecryptMut, KeyInit};
 use aes::Aes128;
 use ecb::Decryptor as EcbDecryptor;

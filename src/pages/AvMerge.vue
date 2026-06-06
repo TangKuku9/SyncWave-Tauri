@@ -6,14 +6,14 @@
     </div>
 
     <div class="file-select-container">
-      <div class="file-select-box" @click="selectVideo">
+      <div class="file-select-box" :class="{ 'has-file': videoPath }" @click="selectVideo">
         <Icon name="videoFile" :size="40" />
         <div class="file-select-label">视频文件</div>
         <div class="file-select-hint">点击选择 MP4/MKV/AVI 文件</div>
         <div class="file-select-info" v-if="videoFileName">{{ videoFileName }}</div>
         <button class="file-select-btn">选择视频</button>
       </div>
-      <div class="file-select-box" @click="selectAudio">
+      <div class="file-select-box" :class="{ 'has-file': audioPath }" @click="selectAudio">
         <Icon name="musicNote" :size="40" />
         <div class="file-select-label">音频文件</div>
         <div class="file-select-hint">点击选择 M4A/AAC/MP3 文件</div>
@@ -63,16 +63,22 @@ const progressText = ref('')
 const logs = ref<LogEntry[]>([])
 
 async function selectVideo() {
-  const f = await selectVideoFile()
-  if (f) { videoPath.value = f; videoFileName.value = f.split('\\').pop() || f }
+  try {
+    const f = await selectVideoFile()
+    if (f) { videoPath.value = f; videoFileName.value = f.split('\\').pop() || f; logs.value.push({ time: new Date().toLocaleTimeString(), message: `已选择视频: ${videoFileName.value}`, type: 'info' }) }
+  } catch (e: any) { logs.value.push({ time: new Date().toLocaleTimeString(), message: `选择失败: ${e.message}`, type: 'error' }) }
 }
 async function selectAudio() {
-  const f = await selectAudioFile()
-  if (f) { audioPath.value = f; audioFileName.value = f.split('\\').pop() || f }
+  try {
+    const f = await selectAudioFile()
+    if (f) { audioPath.value = f; audioFileName.value = f.split('\\').pop() || f; logs.value.push({ time: new Date().toLocaleTimeString(), message: `已选择音频: ${audioFileName.value}`, type: 'info' }) }
+  } catch (e: any) { logs.value.push({ time: new Date().toLocaleTimeString(), message: `选择失败: ${e.message}`, type: 'error' }) }
 }
 async function selectOutput() {
-  const d = await selectFolder()
-  if (d) outputDir.value = d
+  try {
+    const d = await selectFolder()
+    if (d) { outputDir.value = d; logs.value.push({ time: new Date().toLocaleTimeString(), message: `输出目录: ${d}`, type: 'info' }) }
+  } catch (e: any) { logs.value.push({ time: new Date().toLocaleTimeString(), message: `目录选择失败: ${e.message}`, type: 'error' }) }
 }
 
 async function startMerge() {
